@@ -1,0 +1,116 @@
+---
+title: "Stat 462 - Individual Project 2"
+output: pdf_document
+---
+```{r}
+#Requirement 1: Preprocessing and Exploratory Data Analysis
+housing <- read.table("AmesHousing.txt", header = TRUE, sep = "\t")
+
+# For simplicity, impute missing values with the median (you may choose another method)
+housing$Lot.Frontage[is.na(housing$Lot.Frontage)] <- median(housing$Lot.Frontage, na.rm = TRUE)
+housing$Mas.Vnr.Area[is.na(housing$Mas.Vnr.Area)] <- median(housing$Mas.Vnr.Area, na.rm = TRUE)
+housing$BsmtFin.SF.1[is.na(housing$BsmtFin.SF.1)] <- median(housing$BsmtFin.SF.1, na.rm = TRUE)
+
+library(ggplot2)
+library(corrplot)
+library(carData)
+library(lattice)
+library(car)
+library(caret)
+library(Matrix)
+library(glmnet)
+
+# Boxplot for selected continuous variables
+selected_vars <- c("SalePrice","Lot.Frontage", "Lot.Area", "Overall.Qual", "Year.Built", "Overall.Qual","Overall.Cond","Year.Built","Year.Remod.Add","Mas.Vnr.Area","BsmtFin.SF.1","BsmtFin.SF.2","Bsmt.Unf.SF","Total.Bsmt.SF","X1st.Flr.SF","X2nd.Flr.SF","Low.Qual.Fin.SF","Gr.Liv.Area","Bsmt.Full.Bath","Bsmt.Half.Bath") 
+
+# Iterate through the selected variables and plot boxplots
+for (var in selected_vars) {
+  boxplot <- ggplot(housing, aes(y = .data[[var]])) + 
+    geom_boxplot() + 
+    ggtitle(paste("Boxplot of", var))
+  plot(boxplot)
+}
+
+# Correlation plot for selected continuous variables
+continuous_data <- housing[, selected_vars]
+corrplot(cor(continuous_data, use = "complete.obs"), method = "circle")
+
+#Requirement 2: Regression Model and Diagnostics
+# Split Data into Training and Testing Sets
+set.seed(2023)
+test_indices <- sample(nrow(housing), round(nrow(housing)/4))
+train_set <- housing[-test_indices, ]
+test_set <- housing[test_indices, ]
+
+# Check for Highly Correlated Predictors
+corr_matrix <- cor(train_set[, selected_vars], use = "complete.obs")
+high_corr <- findCorrelation(corr_matrix, cutoff = 0.75)
+high_corr_vars <- names(train_set[, selected_vars])[high_corr]
+high_corr_vars
+selected_high_corr_vars <- setdiff(selected_vars, c("SalePrice", "Overall.Qual", "Year.Built", "Total.Bsmt.SF"))
+
+
+# Fit Regression Model and Perform Diagnostics
+lm_model <- lm(SalePrice ~ ., data = train_set[, selected_vars])
+summary(lm_model)
+
+# Diagnostics: Check for assumptions, outliers, and multicollinearity
+plot(lm_model)
+
+#Requirement 3: Model Fitting and Comparison
+# Assuming 'selected_vars' contains the names of your predictors and excludes 'SalePrice'
+# Ensure the training set does not have missing values in the selected variables
+train_set_clean <- na.omit(train_set[, c(selected_vars, "SalePrice")])
+
+# Create the model matrix for predictors
+x <- model.matrix(~ ., data = train_set_clean[, selected_vars])
+
+# Create the response vector
+y <- train_set_clean$SalePrice
+
+# Check if the number of rows in x matches the length of y
+nrow(x) == length(y)
+
+# Fit AIC model
+aic_model <- step(lm(SalePrice ~ ., data = train_set[, selected_vars]), direction = "both", criterion = "AIC")
+
+# Fit BIC model
+bic_model <- step(lm(SalePrice ~ ., data = train_set[, selected_vars]), direction = "both", criterion = "BIC")
+
+# Fit Lasso model
+lasso_model <- glmnet(x, y, alpha = 1)
+
+# Fit Elastic Net model
+elastic_net_model <- glmnet(x, y, alpha = 0.5)
+
+# Summarize AIC and BIC models
+summary(aic_model)
+summary(bic_model)
+
+# Plot Lasso and Elastic Net models
+plot(lasso_model)
+plot(elastic_net_model)
+
+#Requirement 4: Calculate Mean Prediction Error
+# Prepare Testing Data
+x_test <- model.matrix(~ ., data = test_set[, selected_vars])
+y_test <- test_set$SalePrice
+
+# Calculate Mean Prediction Error
+predict_error <- function(model, x, y) {
+  predictions <- predict(model, newx = x)
+  mean((predictions - y)^2)
+}
+
+# Calculate mean prediction error for each model
+mean_error_aic <- predict_error(aic_model, x_test, y_test)
+mean_error_bic <- predict_error(bic_model, x_test, y_test)
+mean_error_lasso <- predict_error(lasso_model, x_test, y_test)
+mean_error_elastic_net <- predict_error(elastic_net_model, x_test, y_test)
+
+# Output the errors
+c(AIC = mean_error_aic, BIC = mean_error_bic, Lasso = mean_error_lasso, ElasticNet = mean_error_elastic_net)
+
+```
+
+
