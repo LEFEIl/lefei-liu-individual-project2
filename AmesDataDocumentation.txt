@@ -1,0 +1,97 @@
+NAME: AmesHousing.txt
+TYPE: Population
+SIZE: 2930 observations, 82 variables
+ARTICLE TITLE: Ames Iowa: Alternative to the Boston Housing Data Set
+
+DESCRIPTIVE ABSTRACT: Data set contains information from the Ames Assessor’s Office used in computing assessed values for individual residential properties sold in Ames, IA from 2006 to 2010.
+
+SOURCES: 
+Ames, Iowa Assessor’s Office 
+
+VARIABLE DESCRIPTIONS:
+Tab characters are used to separate variables in the data file. The data has 82 columns which include 23 nominal, 23 ordinal, 14 discrete, and 20 continuous variables (and 2 additional observation identifiers).
+
+Order (Discrete): Observation number
+
+PID (Nominal): Parcel identification number  - can be used with city web site for parcel review. 
+
+MS SubClass (Nominal): Identifies the type of dwelling involved in the sale.	
+
+       020	1-STORY 1946 & NEWER ALL STYLES
+       030	1-STORY 1945 & OLDER
+       040	1-STORY W/FINISHED ATTIC ALL AGES
+       045	1-1/2 STORY - UNFINISHED ALL AGES
+       050	1-1/2 STORY FINISHED ALL AGES
+       060	2-STORY 1946 & NEWER
+       070	2-STORY 1945 & OLDER
+       075	2-1/2 STORY ALL AGES
+       080	SPLIT OR MULTI-LEVEL
+       085	SPLIT FOYER
+       090	DUPLEX - ALL STYLES AND AGES
+       120	1-STORY PUD (Planned Unit Development) - 1946 & NEWER
+       150	1-1/2 STORY PUD - ALL AGES
+       160	2-STORY PUD - 1946 & NEWER
+       180	PUD - MULTILEVEL - INCL SPLIT LEV/FOYER
+       190	2 FAMILY CONVERSION - ALL STYLES AND AGES
+
+MS Zoning (Nominal): Identifies the general zoning classification of the sale.
+		
+       A	Agriculture
+       C	Commercial
+       FV	Floating Village Residential
+       I	Industrial
+       RH	Residential High Density
+       RL	Residential Low Density
+       RP	Residential Low Density Park 
+       RM	Residential Medium Density
+	
+Lot Frontage (Continuous): Linear feet of street connected to property
+
+Lot Area (Continuous): Lot size in square feet
+
+Street (Nominal): Type of road access to property
+
+       Grvl	Gravel	
+       Pave	Paved
+       	
+Alley (Nominal): Type of alley access to property
+
+       Grvl	Gravel
+       Pave	Paved
+       NA 	No alley access
+		
+Lot Shape (Ordinal): General shape of property
+
+       Reg	Regular	
+       IR1	Slightly irregular
+       IR2	Moderately Irregular
+       IR3	Irregular
+       
+Land Contour (Nominal): Flatness of the property
+
+       Lvl	Near Flat/Level	
+       Bnk	Banked - Quick and significant rise from street grade to building
+       HLS	Hillside - Significant slope from side to side
+       Low	Depression
+		
+Utilities (Ordinal): Type of utilities available
+		
+       AllPub	All public Utilities (E,G,W,& S)	
+       NoSewr	Electricity, Gas, and Water (Septic Tank)
+       NoSeWa	Electricity and Gas Only
+       ELO	Electricity only	
+	
+Lot Config (Nominal): Lot configuration
+
+       Inside	Inside lot
+       Corner	Corner lot
+       CulDSac	Cul-de-sac
+       FR2	Frontage on 2 sides of property
+       FR3	Frontage on 3 sides of property
+	
+Land Slope (Ordinal): Slope of property
+		
+       Gtl	Gentle slope
+       Mod	Moderate Slope	
+       Sev	Severe Slope
+	
